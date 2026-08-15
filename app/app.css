@@ -206,6 +206,7 @@
 
             &.is-dragging {
                 @apply bg-orange-50;
+
                 border-color: #f97316 !important;
 
                 .drop-icon {
@@ -266,6 +267,7 @@
 
                 h3 {
                     @apply text-black truncate max-w-full px-4 mb-3;
+
                     font-size: 1.01rem !important;
                 }
 
