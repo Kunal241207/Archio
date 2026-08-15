@@ -1,8 +1,19 @@
 export const HOSTING_CONFIG_KEY = "archio_hosting_config";
 export const HOSTING_DOMAIN_SUFFIX = ".puter.site";
 
-export const isHostedUrl = (value: unknown): value is string =>
-    typeof value === "string" && value.includes(HOSTING_DOMAIN_SUFFIX);
+export const isHostedUrl = (value: unknown): value is string => {
+    if (typeof value !== "string") return false;
+
+    try {
+        const url = new URL(value);
+        return (
+            url.protocol === "https:" &&
+            url.hostname.endsWith(HOSTING_DOMAIN_SUFFIX)
+        );
+    } catch {
+        return false;
+    }
+};
 
 export const createHostingSlug = () =>
     `archio-${Date.now().toString(36)}-${Math.random()
