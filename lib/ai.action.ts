@@ -18,10 +18,12 @@ export const fetchAsDataUrl = async (url: string): Promise<string> => {
 export const generate3DView = async ({sourceImage}: Generate3DViewParams) => {
     const dataUrl = sourceImage.startsWith("data:") ? sourceImage : await fetchAsDataUrl(sourceImage);
 
-    const base64data = dataUrl.split(",")[1];
-    const mimeType = dataUrl.split(",")[0].split(":")[1];
+    const separatorIndex = dataUrl.indexOf(",");
+    const header = separatorIndex === -1 ? "" : dataUrl.slice(0, separatorIndex);
+    const base64data = separatorIndex === -1 ? "" : dataUrl.slice(separatorIndex + 1);
+    const mimeType = header.replace(/^data:/, "").split(";")[0];
 
-    if (!base64data || !mimeType) {
+    if (!base64data || !mimeType.startsWith("image/")) {
         throw new Error("Invalid image payload");
     }
 
