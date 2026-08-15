@@ -15,7 +15,7 @@ export const getUser = async () => {
     }
 }
 
-export const createProject = async ({item}: CreateProjectParams): Promise<DesignItem | null> => {
+export const createProject = async ({ item, visibility }: CreateProjectParams): Promise<DesignItem | null> => {
     const projectId = item.id;
 
     const hosting = await getOrCreateHostingConfig();
@@ -54,6 +54,9 @@ export const createProject = async ({item}: CreateProjectParams): Promise<Design
         ...rest,
         sourceImage: hostedSource.url,
         renderedImage: hostedRendered?.url || undefined,
+        ...(visibility === undefined
+            ? {}
+            : { isPublic: visibility === "public" }),
     };
 
     try {
