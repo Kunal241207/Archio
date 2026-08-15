@@ -14,21 +14,31 @@ const visualizerId = () => {
   const [currentImage, setCurrentImage] = useState<string | null>(
     initialRender || null,
   );
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   const handleBack = () => navigate("/");
 
   const runGeneration = async () => {
     if (!initialImage) return;
 
+    setGenerationError(null);
     setIsProcessing(true);
     try {
       const result = await generate3DView({ sourceImage: initialImage });
 
       if (result.renderedImage) {
         setCurrentImage(result.renderedImage);
+        return;
       }
+
+      setGenerationError(
+        "The 3D visualization could not be generated. Try again.",
+      );
     } catch (error) {
       console.error("Generation failed:", error);
+      setGenerationError(
+        "The 3D visualization could not be generated. Try again.",
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -96,6 +106,18 @@ const visualizerId = () => {
                   <RefreshCcw className="spinner" />
                   <span className="title">Rendering...</span>
                   <span className="subtitle">Generating your 3D visualization</span>
+                </div>
+              </div>
+            )}
+
+            {generationError && !isProcessing && (
+              <div className="render-overlay">
+                <div className="rendering-card">
+                  <span className="title">Generation failed</span>
+                  <span className="subtitle">{generationError}</span>
+                  <Button size="sm" onClick={runGeneration} disabled={isProcessing}>
+                    <RefreshCcw className="w-4 h-4 mr-2" /> Retry
+                  </Button>
                 </div>
               </div>
             )}
