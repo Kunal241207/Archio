@@ -1,7 +1,9 @@
 import type { Route } from "./+types/home";
 import Navbar from "../../components/Navbar";
-import { ArrowRight, Layers, ArrowUpRight, Clock, CloudUpload, Play, Sliders, Sun, RotateCcw } from "lucide-react";
+import { ArrowRight, Layers, ArrowUpRight, Clock, Play, Sliders, Sun, RotateCcw } from "lucide-react";
+import Upload from "../../components/Upload";
 import { Button } from "../../components/ui/Button";
+import { useNavigate } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,6 +13,14 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+  const navigate = useNavigate();
+
+  const handleUploadComplete = async(base64Image: string) => {
+    const newId = Date.now().toString();
+    navigate(`/visualizer/${newId}`);
+    return true;
+  };
+  
   return (
     <div className="home">
       <Navbar />
@@ -70,15 +80,7 @@ export default function Home() {
             <h3>Upload your floor plan</h3>
             <p className="upload-sub">Supports JPG, PNG up to 10 MB</p>
 
-            <label className="dropzone" htmlFor="floor-plan-input">
-              <input id="floor-plan-input" type="file" className="drop-input" accept="image/jpeg,image/png" />
-              <div className="drop-content">
-                <div className="drop-icon">
-                  <CloudUpload className="w-5 h-5" />
-                </div>
-                <span className="drop-label">Click to upload or drag and drop</span>
-              </div>
-            </label>
+            <Upload onComplete={handleUploadComplete} />
           </div>
         </div>
       </section>

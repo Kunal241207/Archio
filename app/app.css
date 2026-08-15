@@ -194,13 +194,26 @@
         @apply w-full;
 
         .dropzone {
-            @apply relative h-48 rounded-xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center cursor-pointer bg-zinc-50 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-100;
+            @apply relative h-43 rounded-xl border-2 border-dashed border-orange-200 bg-white transition-all duration-200 flex flex-col items-center justify-center cursor-pointer;
 
-            &.is-dragging {
-                @apply border-primary bg-orange-50;
+            &:hover {
+                @apply border-orange-400 bg-orange-50/50;
 
                 .drop-icon {
-                    @apply bg-orange-100 text-primary;
+                    @apply bg-orange-200 text-orange-600 scale-105;
+                }
+            }
+
+            &.is-dragging {
+                @apply bg-orange-50;
+                border-color: #f97316 !important;
+
+                .drop-icon {
+                    @apply bg-orange-200 text-orange-600 scale-110;
+                }
+
+                .drop-content p:first-of-type {
+                    @apply text-orange-600;
                 }
             }
 
@@ -212,51 +225,60 @@
                 @apply flex flex-col items-center pointer-events-none;
 
                 .drop-icon {
-                    @apply w-12 h-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-zinc-200 text-zinc-500;
+                    @apply w-12 h-12 rounded-full flex items-center justify-center mb-4 transition-all duration-200 bg-orange-100 text-orange-500;
+
+                    svg {
+                        @apply w-5 h-5;
+                    }
                 }
 
                 p {
-                    @apply text-zinc-900 font-bold text-sm mb-1;
+                    @apply text-zinc-900 font-semibold text-sm mb-1 transition-colors duration-200;
                 }
 
                 .help {
-                    @apply text-zinc-500 text-xs;
+                    @apply text-zinc-400 text-xs font-normal;
                 }
-            }
-
-            &:not(.is-dragging):hover .drop-icon {
-                @apply bg-zinc-300 text-black;
             }
         }
 
         .upload-status {
-            @apply h-48 rounded-xl border border-zinc-200 bg-white p-6 flex flex-col justify-center relative overflow-hidden;
+            @apply h-43 rounded-xl border-2 border-dashed border-orange-200 bg-white p-6 flex flex-col justify-center relative overflow-hidden;
 
             .status-content {
                 @apply relative z-10 flex flex-col items-center justify-center text-center;
 
                 .status-icon {
-                    @apply w-12 h-12 rounded-lg bg-zinc-100 flex items-center justify-center text-black mb-3 border border-zinc-200;
+                    @apply w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 mb-4 border-2 border-orange-200;
+
+                    svg {
+                        @apply w-5 h-5;
+                    }
 
                     .check {
                         @apply text-green-500;
                     }
-                }
 
-                h3 {
-                    @apply text-black font-bold text-sm truncate max-w-full px-4;
-                }
-
-                .progress {
-                    @apply w-full max-w-50 h-1.5 bg-zinc-100 rounded-full mt-3 overflow-hidden;
-
-                    .bar {
-                        @apply h-full bg-primary transition-all duration-300 ease-out;
+                    .image {
+                        @apply text-orange-500;
                     }
                 }
 
-                .status-text {
-                    @apply text-zinc-500 text-xs font-mono uppercase mt-2;
+                h3 {
+                    @apply text-black truncate max-w-full px-4 mb-3;
+                    font-size: 1.01rem !important;
+                }
+
+                .progress {
+                    @apply w-60 max-w-sm relative;
+
+                    .bar {
+                        @apply h-1.5 bg-orange-500 transition-all duration-200 ease-linear rounded-full;
+                    }
+
+                    .status-text {
+                        @apply text-zinc-500 text-xs mt-2 block;
+                    }
                 }
             }
         }
