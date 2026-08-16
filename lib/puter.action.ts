@@ -22,44 +22,44 @@ export const createProject = async ({ item, visibility = "private" }: CreateProj
     }
     const projectId = item.id;
 
-    const hosting = await getOrCreateHostingConfig();
-
-    const hostedSource = projectId ?
-        await uploadImageToHosting({ hosting, url: item.sourceImage, projectId, label: 'source', }) : null;
-
-    const hostedRender = projectId && item.renderedImage ?
-        await uploadImageToHosting({ hosting, url: item.renderedImage, projectId, label: 'rendered', }) : null;
-
-    const resolvedSource = hostedSource?.url || (isHostedUrl(item.sourceImage)
-        ? item.sourceImage
-        : ''
-    );
-
-    if(!resolvedSource) {
-        console.warn('Failed to host source image, skipping save.')
-        return null;
-    }
-
-    const resolvedRender = hostedRender?.url
-        ? hostedRender?.url
-        : item.renderedImage && isHostedUrl(item.renderedImage)
-            ? item.renderedImage
-            : undefined;
-
-    const {
-        sourcePath: _sourcePath,
-        renderedPath: _renderedPath,
-        publicPath: _publicPath,
-        ...rest
-    } = item;
-
-    const payload = {
-        ...rest,
-        sourceImage: resolvedSource,
-        renderedImage: resolvedRender,
-    }
-
     try {
+        const hosting = await getOrCreateHostingConfig();
+
+        const hostedSource = projectId ?
+            await uploadImageToHosting({ hosting, url: item.sourceImage, projectId, label: 'source', }) : null;
+
+        const hostedRender = projectId && item.renderedImage ?
+            await uploadImageToHosting({ hosting, url: item.renderedImage, projectId, label: 'rendered', }) : null;
+
+        const resolvedSource = hostedSource?.url || (isHostedUrl(item.sourceImage)
+            ? item.sourceImage
+            : ''
+        );
+
+        if(!resolvedSource) {
+            console.warn('Failed to host source image, skipping save.')
+            return null;
+        }
+
+        const resolvedRender = hostedRender?.url
+            ? hostedRender?.url
+            : item.renderedImage && isHostedUrl(item.renderedImage)
+                ? item.renderedImage
+                : undefined;
+
+        const {
+            sourcePath: _sourcePath,
+            renderedPath: _renderedPath,
+            publicPath: _publicPath,
+            ...rest
+        } = item;
+
+        const payload = {
+            ...rest,
+            sourceImage: resolvedSource,
+            renderedImage: resolvedRender,
+        }
+
         const response = await puter.workers.exec(`${PUTER_WORKER_URL}/api/projects/save`, {
             method: 'POST',
             body: JSON.stringify({

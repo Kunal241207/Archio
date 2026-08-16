@@ -11,6 +11,7 @@ const visualizerId = () => {
   const { userId } = useOutletContext<AuthContext>();
 
   const hasInitialGenerated = useRef(false);
+  const requestTokenRef = useRef(0);
   const [project, setProject] = useState<DesignItem | null>(null);
   const [isProjectLoading, setIsProjectLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -22,20 +23,32 @@ const visualizerId = () => {
   const runGeneration = async (item: DesignItem) => {
     if (!id || !item.sourceImage) return;
 
+    const capturedToken = requestTokenRef.current;
+    const capturedId = id;
+
     setGenerationError(null);
     setIsProcessing(true);
     try {
       const result = await generate3DView({ sourceImage: item.sourceImage });
 
+      if (capturedToken !== requestTokenRef.current || capturedId !== id) {
+        return;
+      }
+
       if (result.renderedImage) {
-        setCurrentImage(result.renderedImage);
         const updatedItem = { ...item, renderedImage: result.renderedImage, renderedPath: result.renderedPath, timestamp: Date.now(), ownerId: item.ownerId ?? userId ?? null, isPublic: item.isPublic ?? false };
         
         const saved = await createProject({item: updatedItem, visibility: "private"})
 
+        if (capturedToken !== requestTokenRef.current || capturedId !== id) {
+          return;
+        }
+
         if (saved) {
           setProject(saved)
           setCurrentImage(saved.renderedImage || result.renderedImage)
+        } else {
+          setCurrentImage(result.renderedImage);
         }
         return;
       }
@@ -45,16 +58,27 @@ const visualizerId = () => {
       );
     } catch (error) {
       console.error("Generation failed:", error);
-      setGenerationError(
-        "The 3D visualization could not be generated. Try again.",
-      );
+      if (capturedToken === requestTokenRef.current && capturedId === id) {
+        setGenerationError(
+          "The 3D visualization could not be generated. Try again.",
+        );
+      }
     } finally {
-      setIsProcessing(false);
+      if (capturedToken === requestTokenRef.current && capturedId === id) {
+        setIsProcessing(false);
+      }
     }
   };
 
   useEffect(() => {
     let isMounted = true;
+
+    requestTokenRef.current += 1;
+    setProject(null);
+    setCurrentImage(null);
+    setGenerationError(null);
+    setIsProcessing(false);
+    hasInitialGenerated.current = false;
 
     const loadProject = async () => {
       if (!id) {
@@ -71,7 +95,6 @@ const visualizerId = () => {
       setProject(fetchedProject);
       setCurrentImage(fetchedProject?.renderedImage || null);
       setIsProjectLoading(false);
-      hasInitialGenerated.current = false;
     };
 
     loadProject();
