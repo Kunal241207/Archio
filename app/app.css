@@ -409,6 +409,7 @@
 
                 .compare-stage {
                     @apply relative bg-zinc-100 flex items-center justify-center;
+
                     height: clamp(460px, 60vw, 700px);
 
                     > * {
