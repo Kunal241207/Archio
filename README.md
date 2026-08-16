@@ -1,4 +1,4 @@
-# Roomify
+# Archio
 
 An AI-first design environment for visualizing, rendering, and shipping architectural projects — built with React Router v7, TypeScript, and TailwindCSS v4.
 
@@ -51,8 +51,8 @@ lib/
 ### Docker
 
 ```bash
-docker build -t roomify .
-docker run -p 3000:3000 roomify
+docker build -t archio .
+docker run -p 3000:3000 archio
 ```
 
 ### Manual
